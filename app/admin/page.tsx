@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Overview",
+  title: "Overviews",
 };
 const page = async () => {
   const [messageReq, staffReq] = await Promise.all([
