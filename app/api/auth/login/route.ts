@@ -2,10 +2,11 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import { signinFields } from "@/type";
 import { signValidation } from "@/config/validation";
+import * as jose from "jose";
 
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
 export async function POST(req: Request) {
   try {
     const cookieStore = await cookies();
@@ -57,13 +58,13 @@ export async function POST(req: Request) {
       });
     }
 
-    const token = jwt.sign(
-      { id: others.id },
-      process.env.JWT_SECRET_KEY as string,
-      {
-        expiresIn: "7D",
-      },
-    );
+    const token = await new jose.SignJWT({
+      id: user.id,
+      role: user.role,
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("7d")
+      .sign(SECRET);
 
     cookieStore.set("bholy", token, {
       maxAge: 60 * 60 * 24 * 7,

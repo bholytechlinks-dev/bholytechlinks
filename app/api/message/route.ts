@@ -55,7 +55,15 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    await AuthourizationCheck();
+    const authourise = await AuthourizationCheck();
+    // console.log(authourise, "doneeee");
+
+    if (!authourise) {
+      return NextResponse.json({
+        success: false,
+        message: "unauthorise access",
+      });
+    }
 
     const messages = await prisma.message.findMany();
 
@@ -75,7 +83,13 @@ export async function GET() {
 
 export async function DELETE(req: Request) {
   try {
-    await AuthourizationCheck();
+    const authourise = await AuthourizationCheck();
+    if (!authourise) {
+      return NextResponse.json({
+        success: false,
+        message: "unauthorise access",
+      });
+    }
     const { id } = await req.json();
     await prisma.message.delete({
       where: {
