@@ -1,4 +1,5 @@
 import Overview from "@/component/admin/overview/Overview";
+import FadeLoading from "@/component/loading/FadeLoading";
 import { Messages, Staff } from "@/type";
 import { Metadata } from "next";
 import React from "react";
@@ -8,11 +9,11 @@ export const metadata: Metadata = {
 };
 const page = async () => {
   const [messageReq, staffReq] = await Promise.all([
-    await fetch(`${process.env.API_URL}/api/message`, {
+    await fetch(`${process.env.NEXT_PUBLIC_URL}/api/message`, {
       method: "GET",
       cache: "no-store",
     }),
-    await fetch(`${process.env.API_URL}/api/staff`, {
+    await fetch(`${process.env.NEXT_PUBLIC_URL}/api/staff`, {
       method: "GET",
       cache: "no-store",
     }),
@@ -22,13 +23,15 @@ const page = async () => {
 
   const message = messageRes.data as Messages;
   const staff = staffRes.data as Staff;
-  // if (messages) {
-  //   return (
-  //     <div>
-  //       <h1>Loading</h1>
-  //     </div>
-  //   );
-  // }
+  console.log(message, staff);
+
+  if (!message || !staff) {
+    return (
+      <div className="w-full">
+        <FadeLoading />
+      </div>
+    );
+  }
   return (
     <div className="w-full">
       <Overview messages={message} staff={staff} />

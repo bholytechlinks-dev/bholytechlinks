@@ -1,9 +1,10 @@
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
 import { z } from "zod";
-import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 
+import * as jose from "jose";
+
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
 export const mesageValidation = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
@@ -20,29 +21,21 @@ export const signValidation = z.object({
 export const isAdminCheck = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get("bholy")?.value;
-  if (!token) {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
-  }
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET_KEY as string,
-  ) as jwt.JwtPayload;
 
-  if (!decoded) {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
+  console.log("checking");
+
+  if (!token) {
+    return null;
   }
-  const id = decoded.id;
+
+  const { payload } = await jose.jwtVerify(token, SECRET);
+
+  if (!payload) {
+    return null;
+  }
+  const id = payload.id as string;
   if (!id) {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
+    return null;
   }
   const user = await prisma.admin.findUnique({
     where: {
@@ -51,40 +44,27 @@ export const isAdminCheck = async () => {
     },
   });
   if (!user) {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
+    return null;
   }
-  console.log(token);
+  return user;
 };
 
-export const AuthourizationCheck = async () => {
+export async function AuthourizationCheck() {
   const cookieStore = await cookies();
   const token = cookieStore.get("bholy")?.value;
+  // console.log(token);
   if (!token) {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
+    return null;
   }
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET_KEY as string,
-  ) as jwt.JwtPayload;
+  const { payload } = await jose.jwtVerify(token, SECRET);
+  console.log(payload, "payload");
 
-  if (!decoded) {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
+  if (!payload) {
+    return null;
   }
-  const id = decoded.id;
+  const id = payload.id as string;
   if (!id) {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
+    return null;
   }
   const user = await prisma.admin.findUnique({
     where: {
@@ -92,16 +72,10 @@ export const AuthourizationCheck = async () => {
     },
   });
   if (!user) {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
+    return null;
   }
   if (user.role !== "Admin" && user.role !== "Staff") {
-    return NextResponse.json({
-      success: false,
-      message: "unauthorise access",
-    });
+    return null;
   }
-  console.log(token);
-};
+  return user;
+}

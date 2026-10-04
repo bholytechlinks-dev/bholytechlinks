@@ -1,11 +1,11 @@
 "use client";
 
-import DeleteModal from "@/component/heroui/DeleteModal";
+import DeleteStaffModal from "@/component/heroui/DeleteStaffModal";
+import EditRoleModal from "@/component/heroui/EditRoleModal";
 import FadeLoading from "@/component/loading/FadeLoading";
-import { Messages } from "@/type";
-import Link from "next/link";
+import { Staff } from "@/type";
 
-const Message = ({ messages }: { messages: Messages }) => {
+const Staffs = ({ staff }: { staff: Staff }) => {
   return (
     <div className="w-full flex flex-col gap-5 ">
       <div className="w-full flex flex-col gap-1">
@@ -16,8 +16,7 @@ const Message = ({ messages }: { messages: Messages }) => {
       </div>
 
       {/* table  */}
-
-      {!messages ? (
+      {!staff ? (
         <div className="w-full">
           <FadeLoading />
         </div>
@@ -28,37 +27,28 @@ const Message = ({ messages }: { messages: Messages }) => {
 
             <div className="w-full flex flex-row items-center px-3 py-1.5">
               <p className="text-sm w-[5%]">S/N</p>
-              <p className="text-sm w-[15%]">Name</p>
-              <p className="text-sm w-[25%]">Email</p>
-              <p className="text-sm w-[30%]">Messages</p>
-              <p className="text-sm w-[10%]">Status</p>
-              <p className="text-sm w-[15%]">Action</p>
+              <p className="text-sm w-[40%]">Email</p>
+              <p className="text-sm w-[15%]">Role</p>
+              <p className="text-sm w-[40%]">Action</p>
             </div>
 
             <div className="mt-5 w-full h-96 overflow-y-auto  flex flex-col">
-              {messages.length < 1 ? (
+              {staff.length < 1 ? (
                 <div></div>
               ) : (
                 <>
-                  {messages.map((eachM, index) => {
+                  {staff.map((eachS, index) => {
                     return (
                       <div
                         key={index}
                         className="w-full flex flex-row odd:bg-darkBlue/5 items-center px-3 py-1.5"
                       >
                         <p className="text-sm w-[5%]">{index + 1}</p>
-                        <p className="text-sm w-[15%]">{eachM.name}</p>
-                        <p className="text-sm w-[25%]">{eachM.email}</p>
-                        <p className="text-sm w-[30%]">{eachM.message}</p>
-                        <p className="text-sm w-[10%]">Attend to</p>
+                        <p className="text-sm w-[40%]">{eachS.email}</p>
+                        <p className="text-sm w-[15%]">{eachS.role}</p>
                         <div className="text-sm w-[15%] flex flex-row gap-2.5">
-                          <Link
-                            href={"/admin"}
-                            className="px-3 py-1 cursor-pointer rounded-md text-sm text-white bg-blue-800"
-                          >
-                            View
-                          </Link>
-                          <DeleteModal id={eachM.id} />
+                          <EditRoleModal id={eachS.id} email={eachS.email} />
+                          <DeleteStaffModal id={eachS.id} email={eachS.email} />
                         </div>
                       </div>
                     );
@@ -73,4 +63,4 @@ const Message = ({ messages }: { messages: Messages }) => {
   );
 };
 
-export default Message;
+export default Staffs;

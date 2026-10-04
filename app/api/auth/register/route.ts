@@ -77,8 +77,14 @@ export async function PUT(req: Request) {
     });
   }
 
-  await isAdminCheck();
+  const admin = await isAdminCheck();
 
+  if (!admin) {
+    return NextResponse.json({
+      success: true,
+      message: "unauthorise access",
+    });
+  }
   await prisma.admin.update({
     where: {
       id,
@@ -104,8 +110,15 @@ export async function PATCH(req: Request) {
     });
   }
 
-  await isAdminCheck();
+  const admin = await isAdminCheck();
 
+  if (!admin) {
+    return NextResponse.json({
+      success: true,
+      message: "unauthorise access",
+    });
+  }
+  
   const user = await prisma.admin.findUnique({
     where: {
       email: email,

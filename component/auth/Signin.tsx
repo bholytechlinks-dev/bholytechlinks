@@ -1,12 +1,14 @@
 "use client";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
 import AddToast from "../heroui/AddToast";
 
 const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,25 +25,32 @@ const Signin = () => {
   };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const { email, password } = formData;
-    if (!email || !password) {
-      return;
-    }
-    const request = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      setLoading(true);
+      e.preventDefault();
+      const { email, password } = formData;
+      if (!email || !password) {
+        return AddToast("All fields are required", "danger");
+      }
+      const request = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const response = await request.json();
-    if (response.success) {
-      AddToast(response.message as string, "success");
-      return redirect("/admin");
-    } else {
-      return AddToast(response.message as string, "danger");
+      const response = await request.json();
+      if (response.success) {
+        AddToast(response.message as string, "success");
+        return router.push("/admin");
+      } else {
+        return AddToast(response.message as string, "danger");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -58,8 +67,11 @@ const Signin = () => {
           </button>
         </Link>
       </div>
-      <div className="md:w-[60%] w-full h-screen bg-white text-darkBlue flex flex-col gap-14 md:gap-8 justify-center items-center">
-        <div className="w-full flex flex-col justify-center items-center">
+      <div className="md:w-[60%] w-full h-screen bg-white text-darkBlue flex flex-col gap-14 md:gap-8 md:justify-center justify-start items-center md:pt-0 pt-20">
+        <div className="w-full flex flex-col gap-5 justify-center items-center">
+          <div className="bg-darkBlue p-2  flex flex-col justify-center items-center rounded-md">
+            <FaUser className="text-white text-6xl" />
+          </div>
           <h1 className="text-2xl font-bold text-darkBlue">Login Account</h1>
           <p className="md:w-[50%] w-[95%] text-center">
             Use Your email to login an account, Note this page is strictly for
@@ -106,12 +118,32 @@ const Signin = () => {
               )}
             </div>
           </div>
-          <button
-            type="submit"
-            className="w-[40%] h-14 rounded-full bg-darkBlue text-white mt-10 cursor-pointer"
-          >
-            SIGN IN
-          </button>
+          <div className="w-full flex flex-col justify-center md:items-center items-end gap-2">
+            {loading ? (
+              <button
+                type="button"
+                className="md:w-[40%] w-full h-14 rounded-full bg-darkBlue/65 text-white mt-10 cursor-not-allowed"
+              >
+                PROCESSING...
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="md:w-[40%] w-full h-14 rounded-full bg-darkBlue text-white mt-10 cursor-pointer"
+              >
+                SIGN IN
+              </button>
+            )}
+            <p className="text-darkBlue text-sm md:hidden block mr-5">
+              Dont have an account?{" "}
+              <Link
+                className="italic font-semibold underline underline-offset-2 text-blue-800"
+                href={"/signup"}
+              >
+                Signup
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>
