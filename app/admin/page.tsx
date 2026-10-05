@@ -1,29 +1,24 @@
 import Overview from "@/component/admin/overview/Overview";
 import FadeLoading from "@/component/loading/FadeLoading";
-import { Messages, Staff } from "@/type";
+import { AuthourizationCheck } from "@/config/validation";
+import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Overviews",
+  title: "Overview",
 };
 const page = async () => {
-  const [messageReq, staffReq] = await Promise.all([
-    await fetch(`${process.env.NEXT_PUBLIC_URL}/api/message`, {
-      method: "GET",
-      cache: "no-store",
-    }),
-    await fetch(`${process.env.NEXT_PUBLIC_URL}/api/staff`, {
-      method: "GET",
-      cache: "no-store",
-    }),
-  ]);
-  const messageRes = await messageReq.json();
-  const staffRes = await staffReq.json();
+  const authourise = await AuthourizationCheck();
 
-  const message = messageRes.data as Messages;
-  const staff = staffRes.data as Staff;
-  console.log(message, staff);
+  if (!authourise) {
+    return redirect("/");
+  }
+  const [message, staff] = await Promise.all([
+    await prisma.message.findMany(),
+    await prisma.admin.findMany(),
+  ]);
 
   if (!message || !staff) {
     return (
@@ -32,6 +27,7 @@ const page = async () => {
       </div>
     );
   }
+
   return (
     <div className="w-full">
       <Overview messages={message} staff={staff} />

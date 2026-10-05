@@ -22,8 +22,6 @@ export const isAdminCheck = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get("bholy")?.value;
 
-  console.log("checking");
-
   if (!token) {
     return null;
   }
@@ -52,13 +50,10 @@ export const isAdminCheck = async () => {
 export async function AuthourizationCheck() {
   const cookieStore = await cookies();
   const token = cookieStore.get("bholy")?.value;
-  // console.log(token);
   if (!token) {
     return null;
   }
   const { payload } = await jose.jwtVerify(token, SECRET);
-  console.log(payload, "payload");
-
   if (!payload) {
     return null;
   }
@@ -71,10 +66,39 @@ export async function AuthourizationCheck() {
       id: id,
     },
   });
+
   if (!user) {
     return null;
   }
   if (user.role !== "Admin" && user.role !== "Staff") {
+    return null;
+  }
+  return user;
+}
+
+export async function AuthourizationAdmin() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("bholy")?.value;
+  if (!token) {
+    return null;
+  }
+  const { payload } = await jose.jwtVerify(token, SECRET);
+
+  if (!payload) {
+    return null;
+  }
+  const id = payload.id as string;
+  if (!id) {
+    return null;
+  }
+  const user = await prisma.admin.findUnique({
+    where: {
+      id: id,
+      role: "Admin",
+    },
+  });
+
+  if (!user) {
     return null;
   }
   return user;

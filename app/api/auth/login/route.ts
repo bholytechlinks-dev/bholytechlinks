@@ -69,14 +69,15 @@ export async function POST(req: Request) {
     cookieStore.set("bholy", token, {
       maxAge: 60 * 60 * 24 * 7,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production" ? true : false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
     });
 
     return NextResponse.json({
       success: true,
       message: "Login successfully",
       data: others,
-      token,
     });
   } catch (error) {
     console.log(error);

@@ -1,21 +1,21 @@
 import Staffs from "@/component/admin/staff/Staff";
-import { Staff } from "@/type";
+import { AuthourizationAdmin } from "@/config/validation";
+import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
-import React from "react";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Staff",
 };
+
 const page = async () => {
-  const request = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/staff`, {
-    method: "GET",
-    cache: "no-store",
-  });
-  const response = await request.json();
+  const isAdmin = await AuthourizationAdmin();
 
-  const staff = response.data as Staff;
-  console.log(staff);
+  if (!isAdmin) {
+    return redirect("/");
+  }
 
+  const staff = await prisma.admin.findMany();
   return (
     <div className="w-full">
       <Staffs staff={staff} />

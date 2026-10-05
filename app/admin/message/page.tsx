@@ -1,19 +1,20 @@
 import Message from "@/component/admin/message/Messages";
-import { Messages } from "@/type";
+import { AuthourizationCheck } from "@/config/validation";
+import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export const metadata: Metadata = {
   title: "Messages",
 };
 const page = async () => {
-  const request = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/message`, {
-    method: "GET",
-    cache: "no-store",
-  });
-  const response = await request.json();
+  const user = await AuthourizationCheck();
 
-  const messages = response.data as Messages;
+  if (!user) {
+    return redirect("/");
+  }
+const messages = await prisma.message.findMany();
   return (
     <div className="w-full">
       <Message messages={messages} />

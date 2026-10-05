@@ -1,6 +1,6 @@
 "use client";
 
-import DeleteModal from "@/component/heroui/DeleteModal";
+import DeleteModal from "@/component/heroui/DeleteMessageModal";
 import { Messages, Staff } from "@/type";
 import Link from "next/link";
 
@@ -42,9 +42,7 @@ const Overview = ({
         <div className="w-full flex flex-col items-start p-3 border border-darkBlue/15 rounded hover:scale-105 transition-all duration-500 ease-in-out cursor-pointer">
           <p className="text-sm text-darkBlue/65">Message</p>
           <h1 className="text-darkBlue text-3xl">{attendedMessageCount}</h1>
-          <p className="text-sm text-darkBlue/65">
-            Messages been attend to
-          </p>
+          <p className="text-sm text-darkBlue/65">Messages been attend to</p>
         </div>
         <div className="w-full flex flex-col items-start p-3 border border-darkBlue/15 rounded hover:scale-105 transition-all duration-500 ease-in-out cursor-pointer">
           <p className="text-sm text-darkBlue/65">Message</p>
@@ -92,7 +90,7 @@ const Overview = ({
                       >
                         View
                       </Link>
-                      <DeleteModal id={eachM.id} />
+                      <DeleteModal id={eachM.id} message={eachM.message} />
                     </div>
                   </div>
                 );

@@ -5,14 +5,20 @@ import { useState } from "react";
 import AddToast from "./AddToast";
 import { useRouter } from "next/navigation";
 
-const DeleteStaffModal = ({ id, email }: { id: string; email: string }) => {
+const DeleteMessageModal = ({
+  id,
+  message,
+}: {
+  id: string;
+  message: string;
+}) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const handleDeleteStaff = async () => {
+  const handleDeleteMessage = async () => {
     try {
       setLoading(true);
-      const request = await fetch(`/api/staff`, {
+      const request = await fetch(`/api/message`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -49,13 +55,12 @@ const DeleteStaffModal = ({ id, email }: { id: string; email: string }) => {
           <Modal.Dialog className="sm:max-w-90">
             <Modal.CloseTrigger onClick={() => setIsOpen(false)} />
             <Modal.Header>
-              <Modal.Heading>Delete staff confirmation</Modal.Heading>
+              <Modal.Heading>Delete confirmation</Modal.Heading>
             </Modal.Header>
-            <Modal.Body>
-              <p>
-                Are you sure you want to delete {`${email}`} This action cannot
-                be undone.
-              </p>
+            <Modal.Body className="flex flex-col gap-1">
+              <p>Are you sure you want to delete this message?</p>
+              <p className="text-black font-400">{message}</p>
+              <p>This action cannot be undone.</p>
             </Modal.Body>
             <Modal.Footer>
               <Button onClick={() => setIsOpen(false)} className="w-full">
@@ -67,11 +72,11 @@ const DeleteStaffModal = ({ id, email }: { id: string; email: string }) => {
                   className="w-full bg-red-800 text-white cursor-not-allowed"
                   isDisabled={true}
                 >
-                  Deleting
+                  Deleting...
                 </Button>
               ) : (
                 <Button
-                  onClick={() => handleDeleteStaff()}
+                  onClick={() => handleDeleteMessage()}
                   className="w-full bg-red-800 text-white"
                 >
                   Delete
@@ -85,4 +90,4 @@ const DeleteStaffModal = ({ id, email }: { id: string; email: string }) => {
   );
 };
 
-export default DeleteStaffModal;
+export default DeleteMessageModal;

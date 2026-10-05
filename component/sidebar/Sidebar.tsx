@@ -2,11 +2,37 @@
 
 import { Grid, LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import AddToast from "../heroui/AddToast";
 
 const Sidebar = () => {
+  const router = useRouter();
   const pathName = usePathname();
+  const [loading, setLoading] = useState(false);
 
+  const handeLogout = async () => {
+    try {
+      setLoading(true);
+      const request = await fetch("/api/logout", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const response = await request.json();
+      if (response.success) {
+        AddToast(response.message as string, "success");
+        return router.push("/");
+      } else {
+        return AddToast(response.message as string, "danger");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="w-full h-screen flex flex-col justify-between bg-darkBlue/5 p-3">
       <div className="flex flex-col gap-2 w-full">
@@ -49,9 +75,22 @@ const Sidebar = () => {
         </Link>
       </div>
 
-      <button className="w-full h-10 rounded-sm px-5 text-white bg-red-700 flex flex-row items-center justify-between gap-3.5 cursor-pointer">
-        Logout <LogOut size={14} />
-      </button>
+      {loading ? (
+        <button
+          disabled
+          type="button"
+          className="w-full h-10 rounded-sm px-5 text-white bg-red-700/65 flex flex-row items-center justify-between gap-3.5 cursor-not-allowed"
+        >
+          Processing...
+        </button>
+      ) : (
+        <button
+          onClick={() => handeLogout()}
+          className="w-full h-10 rounded-sm px-5 text-white bg-red-700 flex flex-row items-center justify-between gap-3.5 cursor-pointer"
+        >
+          Logout <LogOut size={14} />
+        </button>
+      )}
     </div>
   );
 };

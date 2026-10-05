@@ -1,3 +1,4 @@
+"use server";
 import { AuthourizationCheck, mesageValidation } from "@/config/validation";
 import { prisma } from "@/lib/prisma";
 import { messageFields } from "@/type";
@@ -53,10 +54,11 @@ export async function POST(req: Request) {
   }
 }
 
+
 export async function GET() {
   try {
+
     const authourise = await AuthourizationCheck();
-    // console.log(authourise, "doneeee");
 
     if (!authourise) {
       return NextResponse.json({
@@ -84,6 +86,7 @@ export async function GET() {
 export async function DELETE(req: Request) {
   try {
     const authourise = await AuthourizationCheck();
+
     if (!authourise) {
       return NextResponse.json({
         success: false,

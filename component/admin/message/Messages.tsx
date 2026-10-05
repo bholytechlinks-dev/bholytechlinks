@@ -1,6 +1,6 @@
 "use client";
 
-import DeleteModal from "@/component/heroui/DeleteModal";
+import DeleteMessageModal from "@/component/heroui/DeleteMessageModal";
 import FadeLoading from "@/component/loading/FadeLoading";
 import { Messages } from "@/type";
 import Link from "next/link";
@@ -30,8 +30,8 @@ const Message = ({ messages }: { messages: Messages }) => {
               <p className="text-sm w-[5%]">S/N</p>
               <p className="text-sm w-[15%]">Name</p>
               <p className="text-sm w-[25%]">Email</p>
-              <p className="text-sm w-[30%]">Messages</p>
-              <p className="text-sm w-[10%]">Status</p>
+              <p className="text-sm w-[25%]">Messages</p>
+              <p className="text-sm w-[15%]">Status</p>
               <p className="text-sm w-[15%]">Action</p>
             </div>
 
@@ -49,8 +49,10 @@ const Message = ({ messages }: { messages: Messages }) => {
                         <p className="text-sm w-[5%]">{index + 1}</p>
                         <p className="text-sm w-[15%]">{eachM.name}</p>
                         <p className="text-sm w-[25%]">{eachM.email}</p>
-                        <p className="text-sm w-[30%]">{eachM.message}</p>
-                        <p className="text-sm w-[10%]">Attend to</p>
+                        <p className="text-sm w-[25%]">{eachM.message}</p>
+                        <p className="text-sm w-[15%]">
+                          {eachM.attendTo ? "Attend to" : "Yet attend to"}
+                        </p>
                         <div className="text-sm w-[15%] flex flex-row gap-2.5">
                           <Link
                             href={"/admin"}
@@ -58,7 +60,10 @@ const Message = ({ messages }: { messages: Messages }) => {
                           >
                             View
                           </Link>
-                          <DeleteModal id={eachM.id} />
+                          <DeleteMessageModal
+                            id={eachM.id}
+                            message={eachM.message}
+                          />
                         </div>
                       </div>
                     );
