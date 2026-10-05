@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
 import AddToast from "../heroui/AddToast";

@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
     if (!role) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-    if (role !== "Admin" && role !== "Staff" && role !== "User") {
+    if (role !== "Admin" && role !== "Staff") {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

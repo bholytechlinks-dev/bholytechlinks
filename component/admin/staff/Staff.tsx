@@ -1,6 +1,7 @@
 "use client";
 
 import DeleteStaffModal from "@/component/heroui/DeleteStaffModal";
+import EditPasswordModal from "@/component/heroui/EditPasswordModal";
 import EditRoleModal from "@/component/heroui/EditRoleModal";
 import FadeLoading from "@/component/loading/FadeLoading";
 import { Staff } from "@/type";
@@ -47,7 +48,15 @@ const Staffs = ({ staff }: { staff: Staff }) => {
                         <p className="text-sm w-[40%]">{eachS.email}</p>
                         <p className="text-sm w-[15%]">{eachS.role}</p>
                         <div className="text-sm w-[15%] flex flex-row gap-2.5">
-                          <EditRoleModal id={eachS.id} email={eachS.email} />
+                          <EditRoleModal
+                            id={eachS.id}
+                            email={eachS.email}
+                            role={eachS.role}
+                          />
+                          <EditPasswordModal
+                            id={eachS.id}
+                            email={eachS.email}
+                          />
                           <DeleteStaffModal id={eachS.id} email={eachS.email} />
                         </div>
                       </div>
