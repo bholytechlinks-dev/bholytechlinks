@@ -13,8 +13,8 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full flex flex-row">
-      <div className="w-2/12 border-r border-darkBlue/15">
+    <div className="w-full flex md:flex-row flex-col">
+      <div className="md:w-2/12 w-full md:border-r border-0 md:border-darkBlue/15">
         <Sidebar />
       </div>
       <div className="md:w-10/12 w-full md:p-5 p-2">{children}</div>
